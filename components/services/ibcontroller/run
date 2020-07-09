@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#[Unit]
+#Description=Job that runs the IBController for paper account
+#Requires=xvfb.service
+#After=xvfb.service
+#
+#[Service]
+#Type=forking
+#Environment='DISPLAY=:0'
+#ExecStart=/root/ibcontroller.paper/IBControllerStart.sh
+#Restart=always
+#
+#[Install]
+#WantedBy=multi-user.target
