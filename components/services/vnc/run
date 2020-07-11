@@ -4,6 +4,8 @@ shopt -s expand_aliases
 
 declare -r service_name='vnc'
 
+source /etc/profile
+
 alias debug="while read data; do echo -e "${data}" | log debug;   done"
 alias info="while read data;  do echo -e "${data}" | log info;    done"
 alias warn="while read data;  do echo -e "${data}" | log warning; done"

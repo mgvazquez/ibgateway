@@ -3,20 +3,14 @@ FROM phusion/baseimage:18.04-1.0.0
 ############# Global Tasks #############
 USER root
 
-# Default Envs
 ENV DEBIAN_FRONTEND=noninteractive \
     DISABLE_SYSLOG=0 \
     DISABLE_SSH=1 \
     DISABLE_CRON=1 \
     DISPLAY=:0
 
-# IBGateway Default port
-EXPOSE 4002
-
-#CMD ["/sbin/my_init", "--quiet"]
 CMD ["/sbin/my_init"]
 
-# documentacion de phusion/baseimage
 RUN install_clean \
         wget \
         unzip \
@@ -25,24 +19,21 @@ RUN install_clean \
         libxtst6 \
         libxi6 \
         x11vnc \
-#        openjfx \
-        htop \
-        net-tools \
  && echo "source /etc/profile" >> /root/.bashrc
 ########################################
 
-########## VNC & XVFB Services #########
+################ Services ##############
 ENV VNC_PASSWORD=123456 \
     VNC_PORT=5900
-COPY components/services/vnc /etc/service/vnc
-COPY components/services/xvfb /etc/service/xvfb
+COPY components/services/xvfb /etc/service/00_xvfb
+COPY components/services/vnc /etc/service/01_vnc
+COPY components/services/ibcontroller /etc/service/02_ibcontroller
 RUN chmod a+x /etc/service/*/*
 ########################################
 
 ###### Instalacion del IBGateway #######
-#/root/Jts/ibgateway/*/ibgateway
-ENV IBGATEWAY_PKG_URL="https://download2.interactivebrokers.com/installers/ibgateway/stable-standalone/ibgateway-stable-standalone-linux-x64.sh" \
-    IBCONTROLLER_VERSION=3.4.0
+#ENV IBGATEWAY_PKG_URL="http://cdn.quantconnect.com/interactive/ibgateway-latest-standalone-linux-x64-v974.4g.sh"
+ENV IBGATEWAY_PKG_URL="https://download2.interactivebrokers.com/installers/ibgateway/stable-standalone/ibgateway-stable-standalone-linux-x64.sh"
 ADD ${IBGATEWAY_PKG_URL} /tmp/ibgateway.sh
 RUN chmod a+x /tmp/ibgateway.sh \
  && echo n | /tmp/ibgateway.sh -c \
@@ -52,23 +43,29 @@ COPY components/ibgateway/* /root/Jts/
 ########################################
 
 ##### Instalacion del IBController #####
-ENV IBCONTROLLER_PKG_URL="https://github.com/ib-controller/ib-controller/releases/download/${IBCONTROLLER_VERSION}/IBController-${IBCONTROLLER_VERSION}.zip" \
+#ENV IBCONTROLLER_PKG_URL="https://github.com/ib-controller/ib-controller/releases/download/3.4.0/IBController-3.4.0.zip" \
+ENV IBCONTROLLER_PKG_URL="http://cdn.quantconnect.com/interactive/IBController-QuantConnect-3.2.0.5.zip" \
     IBC_INI=/root/IBController/IBController.ini \
     IBC_PATH=/opt/IBController \
     TWS_MAJOR_VRSN=978 \
     TWS_PATH=/root/Jts \
-    TWS_CONFIG_PATH=/root/Jts
+    TWS_CONFIG_PATH=/root/Jts \
     LOG_PATH=/root/IBController/Logs \
     TRADING_MODE=paper \
-    TWSUSERID="" \
-    TWSPASSWORD="" \
-    HIDE=""
+    FIXUSERID='' \
+    FIXPASSWORD='' \
+    TWSUSERID="<usr_change_me>" \
+    TWSPASSWORD="<pwd_change_me>" \
+    APP=GATEWAY
 
 ADD ${IBCONTROLLER_PKG_URL} /tmp/ibcontroller.zip
 RUN mkdir -p /{root,opt}/IBController/Logs \
  && unzip /tmp/ibcontroller.zip -d /opt/IBController/ \
  && cd /opt/IBController/ \
  && chmod o+x *.sh */*.sh \
+ && sed -i 's/     >> \"\${log_file}\" 2>\&1/     2>\&1/g' Scripts/DisplayBannerAndLaunch.sh \
+ && sed -i 's/light_red=.*/light_red=""/g' Scripts/DisplayBannerAndLaunch.sh \
+ && sed -i 's/light_green=.*/light_green=""/g' Scripts/DisplayBannerAndLaunch.sh \
  && rm -f /tmp/ibcontroller.zip
 COPY components/ibcontroller/* /root/IBController/
 ########################################

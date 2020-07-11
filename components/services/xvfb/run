@@ -4,6 +4,8 @@ shopt -s expand_aliases
 
 declare -r service_name='xvfb'
 
+source /etc/profile
+
 alias debug="while read data; do echo -e "${data}" | log debug;   done"
 alias info="while read data;  do echo -e "${data}" | log info;    done"
 alias warn="while read data;  do echo -e "${data}" | log warning; done"
@@ -18,17 +20,3 @@ function log(){
 echo "Starting Xvfb - Virtual Framebuffer 'fake' X server" | info
 echo -e "$(env)" | debug
 exec /usr/bin/Xvfb $DISPLAY -ac -screen 0 1980x1020x24 +extension RANDR 2>&1 | info
-
-#[Unit]
-#Description=Job that runs the Xvfb - Virtual Framebuffer 'fake' X server
-#After=network.target
-#
-#[Service]
-#ExecStart=
-#Restart=always
-#
-#[Install]
-#WantedBy=multi-user.target
-
-
-
