@@ -1,9 +1,11 @@
 version: '3'
 services:
-  tws:
+  gateway:
     build:
       context: ../
       dockerfile: Dockerfile
+#    image: mgvazquez/ibgateway:latest
+    restart: always
     ports:
       - "4001:4001"
       - "5900:5900"
