@@ -139,4 +139,10 @@ gateway_1  | Jul 16 21:12:27 a0c679e721a5 ibcontroller: ========================
 
 ---
 
+### TODO
+
+Analyze migration from [IBController](https://github.com/ib-controller/ib-controller) to [IBC](https://github.com/IbcAlpha/IBC)
+
+---
+
 <p align="center"><img src="http://www.catb.org/hacker-emblem/glider.png" alt="hacker emblem"></p>
