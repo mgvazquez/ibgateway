@@ -29,13 +29,14 @@
 # - IMAGE_NAME: Nombre de la imagen, en caso de no setearse, se utilizara el namespace del proyecto
 
 variables:
-  CACHE_PATH: ".docker_cache"
+#  CI_DEBUG_TRACE: "true"
   CI_BUILD_IMAGE: "mgvazquez/docker-build-image:19.03.12"
+#  CI_BUILD_IMAGE: "docker:latest"
   IMAGE_NAME: "${CI_PROJECT_PATH}"
-  GITLAB_API: http://${CI_SERVER_HOST}/api/v4
+#  GITLAB_API: http://${CI_SERVER_HOST}/api/v4
   DOCKER_HOST: tcp://localhost:2375
-  DOCKER_REGISTRY_SNAPSHOTS: "${CI_REGISTRY}"
-  DOCKER_REGISTRY_RELEASES: "${CI_REGISTRY}"
+  DOCKER_REGISTRY_SNAPSHOTS: "registry.gitlab.com"
+  DOCKER_REGISTRY_RELEASES: "registry.gitlab.com"
   DOCKER_REGISTRY_GCLOUD: gcr.io
   TRIGGER_TARGET: ${CI_COMMIT_REF_NAME}
   GOOGLE_APPLICATION_CREDENTIALS: "/opt/gpc-credentials/registry.json"
@@ -46,8 +47,9 @@ variables:
 default:
   image:
     name: ${CI_BUILD_IMAGE}
+    entrypoint: [""]
   services:
-    - name: docker.scm.primary/devops/docker-dind:latest
+    - name: docker:19.03.12-dind
       alias: dind
   before_script:
     - git remote set-url origin git@${CI_SERVER_HOST}:${CI_PROJECT_PATH}.git
@@ -65,8 +67,12 @@ stages:
   echo "Building ${BUILD_TYPE} [${CI_COMMIT_REF_NAME}]"
 
 .checkRegistry: &checkRegistry |
-  if [[ ("x${CI_DEPLOY_USER}" != "x") && ("x${CI_DEPLOY_PASSWORD}" != "x") ]]; then
-    docker login -u ${CI_DEPLOY_USER} -p ${CI_DEPLOY_PASSWORD} ${DOCKER_REGISTRY}
+  if [[ ("x${CI_REGISTRY_USER}" != "x") && ("x${CI_REGISTRY_PASSWORD}" != "x") ]]; then
+    echo "${CI_REGISTRY_PASSWORD}" | docker login -u "${CI_REGISTRY_USER}" --password-stdin "${DOCKER_REGISTRY}";
+  fi
+  if [[ "x${GOOGLE_APPLICATION_CREDENTIALS}" != "x" ]]; then
+    mkdir -p /opt/gpc-credentials;
+    echo "${GOOGLE_APPLICATION_CREDENTIALS}" > ${GOOGLE_APPLICATION_CREDENTIALS}
   fi
 
 .runVersionCheck: &runTagCheck |
@@ -74,6 +80,7 @@ stages:
   export DOCKER_IMAGE_TAG="${CI_COMMIT_TAG:-${CI_COMMIT_REF_NAME}}";
 
 .runMakePackage: &runMakePackage |
+  export DOCKER_HOST="${DOCKER_PORT}"
   docker build \
       --build-arg BUILD_DATE="$(date --utc '+%Y-%m-%d %H:%M:%S UTC')" \
       --build-arg BUILD_VCS_REF="${CI_COMMIT_SHA}" \
@@ -94,9 +101,10 @@ stages:
 generate_build:
   stage: build
   variables:
-    DOCKER_REGISTRY: "$${DOCKER_REGISTRY_SNAPSHOTS}"
+    DOCKER_REGISTRY: "${DOCKER_REGISTRY_SNAPSHOTS}"
   script:
     - *bannerBuilding
+    - *checkRegistry
     - *runTagCheck
     - *runMakePackage
     - *publishPackage
@@ -116,6 +124,7 @@ generate_snapshot:
     DOCKER_REGISTRY: "${DOCKER_REGISTRY_SNAPSHOTS}"
   script:
     - *bannerBuilding
+    - *checkRegistry
     - *runTagCheck
     - *runMakePackage
     - *publishPackage
@@ -135,6 +144,7 @@ generate_release:
     DOCKER_REGISTRY: "${DOCKER_REGISTRY_RELEASES}"
   script:
     - *bannerBuilding
+    - *checkRegistry
     - *runTagCheck
     - *runMakePackage
     - *publishPackage
