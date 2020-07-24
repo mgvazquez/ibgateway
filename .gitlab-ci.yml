@@ -12,10 +12,10 @@
 #	GNU General Public License for more details.
 #
 #		 Autor: Garcia Vazquez, Manuel Andres - DevOps
-#		Correo: mgarciavazquez@primary.com.ar
+#		Correo: mvazquez@scabb-island.com.ar
 #		   Web: www.scabb-island.com.ar
-#		  Repo: https://github.com/mgvazquez/docker-build-image
-#		Issues: https://github.com/mgvazquez/docker-build-image/issues
+#		  Repo: https://github.com/mgvazquez/ibgateway
+#		Issues: https://github.com/mgvazquez/ibgateway/issues
 #
 #		  Nota: <NOTA>
 #
@@ -30,7 +30,7 @@
 # - GOOGLE_APPLICATION_CREDENTIALS: Decalre esta variable en la UI de Gitlab en formato File para habilitar el push a GCR
 
 variables:
-  CI_DEBUG_TRACE: "true"
+#  CI_DEBUG_TRACE: "true"
   CI_BUILD_IMAGE: "mgvazquez/docker-build-image:19.03.12"
   IMAGE_NAME: "${CI_PROJECT_PATH}"
   DOCKER_REGISTRY_SNAPSHOTS: "registry.gitlab.com"
