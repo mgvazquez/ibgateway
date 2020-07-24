@@ -11,9 +11,9 @@
 #	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #	GNU General Public License for more details.
 #
-#		 Autor: Garcia Vazquez, Manuel Andres - DevOps [ISBA]
+#		 Autor: Garcia Vazquez, Manuel Andres - DevOps
 #		Correo: mgarciavazquez@primary.com.ar
-#		   Web: www.primary.com.ar
+#		   Web: www.scabb-island.com.ar
 #		  Repo: https://github.com/mgvazquez/docker-build-image
 #		Issues: https://github.com/mgvazquez/docker-build-image/issues
 #
@@ -24,42 +24,19 @@
 
 # Variable Usage & Precedence:
 #
-# - DOCKER_REGISTRY_TOKEN: Token de la registry a donde se subira la imagen
-# - DOCKER_REGISTRY_USER: Usuario de la registry a donde se subira la imagen
+# - CI_REGISTRY_PASSWORD: Token de la registry a donde se subira la imagen
+# - CI_REGISTRY_USER: Usuario de la registry a donde se subira la imagen
 # - IMAGE_NAME: Nombre de la imagen, en caso de no setearse, se utilizara el namespace del proyecto
+# - GOOGLE_APPLICATION_CREDENTIALS: Decalre esta variable en la UI de Gitlab en formato File para habilitar el push a GCR
 
 variables:
-#  CI_DEBUG_TRACE: "true"
+  CI_DEBUG_TRACE: "true"
   CI_BUILD_IMAGE: "mgvazquez/docker-build-image:19.03.12"
-#  CI_BUILD_IMAGE: "docker:latest"
   IMAGE_NAME: "${CI_PROJECT_PATH}"
-#  GITLAB_API: http://${CI_SERVER_HOST}/api/v4
-  DOCKER_HOST: tcp://localhost:2375
   DOCKER_REGISTRY_SNAPSHOTS: "registry.gitlab.com"
   DOCKER_REGISTRY_RELEASES: "registry.gitlab.com"
   DOCKER_REGISTRY_GCLOUD: gcr.io
-  TRIGGER_TARGET: ${CI_COMMIT_REF_NAME}
-  GOOGLE_APPLICATION_CREDENTIALS: "/opt/gpc-credentials/registry.json"
 
-###############################
-
-########## Defaults ###########
-default:
-  image:
-    name: ${CI_BUILD_IMAGE}
-    entrypoint: [""]
-  services:
-    - name: docker:19.03.12-dind
-      alias: dind
-  before_script:
-    - git remote set-url origin git@${CI_SERVER_HOST}:${CI_PROJECT_PATH}.git
-    - git checkout ${CI_COMMIT_REF_NAME}
-
-# NOTE: implementar estos stages ~> https://docs.gitlab.com/ee/ci/yaml/README.html#pre-and-post
-stages:
-  - .pre
-  - build
-  - .post
 ###############################
 
 ########## Templates ##########
@@ -67,12 +44,8 @@ stages:
   echo "Building ${BUILD_TYPE} [${CI_COMMIT_REF_NAME}]"
 
 .checkRegistry: &checkRegistry |
-  if [[ ("x${CI_REGISTRY_USER}" != "x") && ("x${CI_REGISTRY_PASSWORD}" != "x") ]]; then
+  if [[ ("x${CI_REGISTRY_USER}" != "x") && ("x${CI_REGISTRY_PASSWORD}" != "x") && ("x${GOOGLE_APPLICATION_CREDENTIALS}" == "x") ]]; then
     echo "${CI_REGISTRY_PASSWORD}" | docker login -u "${CI_REGISTRY_USER}" --password-stdin "${DOCKER_REGISTRY}";
-  fi
-  if [[ "x${GOOGLE_APPLICATION_CREDENTIALS}" != "x" ]]; then
-    mkdir -p /opt/gpc-credentials;
-    echo "${GOOGLE_APPLICATION_CREDENTIALS}" > ${GOOGLE_APPLICATION_CREDENTIALS}
   fi
 
 .runVersionCheck: &runTagCheck |
@@ -96,6 +69,25 @@ stages:
 ###############################
 
 ############ Tasks ############
+########## Defaults ###########
+default:
+  image:
+    name: ${CI_BUILD_IMAGE}
+    entrypoint: [""]
+  services:
+    - name: docker:19.03.12-dind
+      alias: dind
+  before_script:
+    - git remote set-url origin git@${CI_SERVER_HOST}:${CI_PROJECT_PATH}.git
+    - git checkout ${CI_COMMIT_REF_NAME}
+    - *checkRegistry
+
+# NOTE: implementar estos stages ~> https://docs.gitlab.com/ee/ci/yaml/README.html#pre-and-post
+stages:
+  - .pre
+  - build
+  - .post
+###############################
 
 ###### BUILD-* #####
 generate_build:
@@ -104,7 +96,6 @@ generate_build:
     DOCKER_REGISTRY: "${DOCKER_REGISTRY_SNAPSHOTS}"
   script:
     - *bannerBuilding
-    - *checkRegistry
     - *runTagCheck
     - *runMakePackage
     - *publishPackage
@@ -124,7 +115,6 @@ generate_snapshot:
     DOCKER_REGISTRY: "${DOCKER_REGISTRY_SNAPSHOTS}"
   script:
     - *bannerBuilding
-    - *checkRegistry
     - *runTagCheck
     - *runMakePackage
     - *publishPackage
@@ -144,7 +134,6 @@ generate_release:
     DOCKER_REGISTRY: "${DOCKER_REGISTRY_RELEASES}"
   script:
     - *bannerBuilding
-    - *checkRegistry
     - *runTagCheck
     - *runMakePackage
     - *publishPackage
