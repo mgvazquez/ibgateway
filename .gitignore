@@ -7,3 +7,5 @@ out
 gen
 .test*
 ignoreme
+.env
+.venv

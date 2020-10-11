@@ -15,6 +15,7 @@ CMD ["/sbin/my_init"]
 RUN install_clean \
         wget \
         unzip \
+        socat \
         xvfb \
         libxrender1 \
         libxtst6 \
@@ -29,6 +30,8 @@ ENV VNC_PASSWORD=123456 \
 COPY components/services/xvfb /etc/service/00_xvfb
 COPY components/services/vnc /etc/service/01_vnc
 COPY components/services/ibcontroller /etc/service/02_ibcontroller
+COPY components/services/socat /etc/service/03_socat
+
 RUN chmod a+x /etc/service/*/*
 ########################################
 
