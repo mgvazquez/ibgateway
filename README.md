@@ -146,3 +146,5 @@ Analyze migration from [IBController](https://github.com/ib-controller/ib-contro
 ---
 
 <p align="center"><img src="http://www.catb.org/hacker-emblem/glider.png" alt="hacker emblem"></p>
+<br/>
+<p align="center">Sponsored by <a href="https://tradespark.la/" target="_blank"><img src="assets/ts_logo.png" alt="TradeSpark"></a></p>
