@@ -147,6 +147,6 @@ Analyze migration from [IBController](https://github.com/ib-controller/ib-contro
 
 <p align="center"><img src="http://www.catb.org/hacker-emblem/glider.png" alt="hacker emblem"></p>
 <br/>
-<p align="center">Powered by <a href="https://www.interactivebrokers.co.uk/" target="_blank"><img src="assets/ibg_logo.png" alt="TradeSpark"></a></p>
+<p align="center">Powered by <a href="https://www.interactivebrokers.co.uk/" target="_blank"><img src="https://github.com/mgvazquez/ibgateway/blob/master/assets/ibg_logo.png" alt="Interactive Brokers"></a></p>
 <br/>
-<p align="center">Sponsored by <a href="https://tradespark.la/" target="_blank"><img src="assets/ts_logo.png" alt="TradeSpark"></a></p>
+<p align="center">Sponsored by <a href="https://tradespark.la/" target="_blank"><img src="https://github.com/mgvazquez/ibgateway/blob/master/assets/ts_logo.png" alt="TradeSpark"></a></p>
