@@ -17,7 +17,7 @@ In addition, it uses the [IBC Project](https://github.com/IbcAlpha/IBC) to manag
 and launch of the ©IBGateway; and serve a VNC server to control the IBC / IBGateway interface.
 
 Current versions:
-* Interactive Brokers Gateway: v981
+* Interactive Brokers Gateway: v981.3c
 * IBC: v3.9.0
 
 You can find the latest version of this image on docker-hub: [mgvazquez/ibgateway](https://hub.docker.com/r/mgvazquez/ibgateway)
