@@ -13,12 +13,12 @@ This image runs the last stable (stand-alone) version of ©Interactive Broker Ga
 The image is based on 'phusion/baseimage:18.04-1.0.0', which is a minimalist image based in Ubuntu Linux with a lot of
 improvements to use as docker base image. If you want know more, take a look at your [documentation]('https://github.com/phusion/baseimage-docker#contents')
 
-In addition, it uses the [IBController Project](https://github.com/ib-controller/ib-controller) to manage the configuration
-and launch of the ©IBGateway; and serve a VNC server to control the IBController / IBGateway interface.
+In addition, it uses the [IBC Project](https://github.com/IbcAlpha/IBC) to manage the configuration
+and launch of the ©IBGateway; and serve a VNC server to control the IBC / IBGateway interface.
 
 Current versions:
-* Interactive Brokers Gateway: v978.2c
-* IBController: v3.2.0.5
+* Interactive Brokers Gateway: v981
+* IBC: v3.9.0
 
 You can find the latest version of this image on docker-hub: [mgvazquez/ibgateway](https://hub.docker.com/r/mgvazquez/ibgateway)
 
@@ -45,6 +45,7 @@ services:
     image: mgvazquez/ibgateway:latest
     restart: always
     ports:
+      - "7462:7462"
       - "4001:4001"
       - "5900:5900"
     environment:
@@ -70,13 +71,13 @@ Another environment variables that you can set are:
 | _VNC_PORT_ | VNC Server port<br>**Default:** 5900 | no |
 | _FIXUSERID_ | FIX account user id<br>**Default:** \<empty\> | no |
 | _FIXPASSWORD_ | FIX account password<br>**Default:** \<empty\> | no |
-| _IBC_INI_ | Absolute path of the `IBController.ini` config file (\*)<br>**Default:** /root/IBController/IBController.ini | no |
+| _IBC_INI_ | Absolute path of the `config.ini` config file (\*)<br>**Default:** /root/IBC/config.ini | no |
 | _TWS_CONFIG_PATH_ | Path of the `jts.ini` config file (\*)<br>**Default:** /root/Jts | no |
 
-> (\*) NOTE: The env-vars `IBC_INI` and `TWS_CONFIG_PATH`, only must be used if you mount your custom `IBController.ini`
+> (\*) NOTE: The env-vars `IBC_INI` and `TWS_CONFIG_PATH`, only must be used if you mount your custom `config.ini`
 > and `jts.ini` files in other paths than the default ones.
 
-> Can find the defaults `IBController.ini` and `jts.ini` files in the `components` folder in this repo.
+> Can find the defaults `config.ini` and `jts.ini` files in the `components` folder in this repo.
 
 #### Launching with docker-compose
 
@@ -141,7 +142,7 @@ gateway_1  | Jul 16 21:12:27 a0c679e721a5 ibcontroller: ========================
 
 ### TODO
 
-Analyze migration from [IBController](https://github.com/ib-controller/ib-controller) to [IBC](https://github.com/IbcAlpha/IBC)
+- none
 
 ---
 

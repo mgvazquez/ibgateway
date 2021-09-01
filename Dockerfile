@@ -2,6 +2,7 @@ FROM phusion/baseimage:18.04-1.0.0
 
 ############# Global Tasks #############
 USER root
+SHELL ["/bin/bash", "-c"]
 
 ENV DEBIAN_FRONTEND=noninteractive \
     DISABLE_SYSLOG=0 \
@@ -29,18 +30,18 @@ ENV VNC_PASSWORD=123456 \
     VNC_PORT=5900
 COPY components/services/xvfb /etc/service/00_xvfb
 COPY components/services/vnc /etc/service/01_vnc
-COPY components/services/ibcontroller /etc/service/02_ibcontroller
+COPY components/services/ibc /etc/service/02_ibc
 COPY components/services/socat /etc/service/03_socat
 
 RUN chmod a+x /etc/service/*/*
 ########################################
 
 ###### Instalacion del IBGateway #######
-#ENV IBGATEWAY_PKG_URL="http://cdn.quantconnect.com/interactive/ibgateway-latest-standalone-linux-x64-v974.4g.sh"
+# TODO: DETECTAR LA VERSION IBGateway
 ENV IBGATEWAY_PKG_URL="https://download2.interactivebrokers.com/installers/ibgateway/stable-standalone/ibgateway-stable-standalone-linux-x64.sh"
 ADD ${IBGATEWAY_PKG_URL} /tmp/ibgateway.sh
 RUN chmod a+x /tmp/ibgateway.sh \
- && echo n | /tmp/ibgateway.sh -c \
+ && echo -e "\nn" | /tmp/ibgateway.sh -c \
  && rm -f /tmp/ibgateway.sh \
  && stat /usr/local/i4j_jres/*/bin | grep File | awk '{print "export JAVA_PATH="$2}' > /etc/profile.d/java.sh
 COPY components/ibgateway/* /root/Jts/
@@ -48,13 +49,14 @@ COPY components/ibgateway/* /root/Jts/
 
 ##### Instalacion del IBController #####
 #ENV IBCONTROLLER_PKG_URL="https://github.com/ib-controller/ib-controller/releases/download/3.4.0/IBController-3.4.0.zip" \
-ENV IBCONTROLLER_PKG_URL="http://cdn.quantconnect.com/interactive/IBController-QuantConnect-3.2.0.5.zip" \
-    IBC_INI=/root/IBController/IBController.ini \
-    IBC_PATH=/opt/IBController \
-    TWS_MAJOR_VRSN=978 \
+#ENV IBCONTROLLER_PKG_URL="http://cdn.quantconnect.com/interactive/IBController-QuantConnect-3.2.0.5.zip" \
+ENV IBC_PKG_URL="https://github.com/IbcAlpha/IBC/releases/download/3.9.0/IBCLinux-3.9.0.zip" \
+    IBC_INI=/root/IBC/config.ini \
+    IBC_PATH=/opt/IBC \
+    TWS_MAJOR_VRSN=981 \
     TWS_PATH=/root/Jts \
     TWS_CONFIG_PATH=/root/Jts \
-    LOG_PATH=/root/IBController/Logs \
+    LOG_PATH=/root/IBC/Logs \
     TRADING_MODE=paper \
     FIXUSERID='' \
     FIXPASSWORD='' \
@@ -62,16 +64,16 @@ ENV IBCONTROLLER_PKG_URL="http://cdn.quantconnect.com/interactive/IBController-Q
     TWSPASSWORD="<pwd_change_me>" \
     APP=GATEWAY
 
-ADD ${IBCONTROLLER_PKG_URL} /tmp/ibcontroller.zip
-RUN mkdir -p /{root,opt}/IBController/Logs \
- && unzip /tmp/ibcontroller.zip -d /opt/IBController/ \
- && cd /opt/IBController/ \
+ADD ${IBC_PKG_URL} /tmp/ibc.zip
+RUN mkdir -p /{root,opt}/IBC/Logs \
+ && unzip /tmp/ibc.zip -d /opt/IBC/ \
+ && cd /opt/IBC/ \
  && chmod o+x *.sh */*.sh \
- && sed -i 's/     >> \"\${log_file}\" 2>\&1/     2>\&1/g' Scripts/DisplayBannerAndLaunch.sh \
- && sed -i 's/light_red=.*/light_red=""/g' Scripts/DisplayBannerAndLaunch.sh \
- && sed -i 's/light_green=.*/light_green=""/g' Scripts/DisplayBannerAndLaunch.sh \
- && rm -f /tmp/ibcontroller.zip
-COPY components/ibcontroller/* /root/IBController/
+ && sed -i 's/     >> \"\${log_file}\" 2>\&1/     2>\&1/g' scripts/displaybannerandlaunch.sh \
+ && sed -i 's/light_red=.*/light_red=""/g' scripts/displaybannerandlaunch.sh \
+ && sed -i 's/light_green=.*/light_green=""/g' scripts/displaybannerandlaunch.sh \
+ && rm -f /tmp/ibc.zip
+COPY components/ibc/* /root/IBC/
 ########################################
 
 ################### Don't move ###################

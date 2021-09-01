@@ -31,9 +31,9 @@ class IBClient(EClient):
         self.ib_port = port
         self.ib_client_id = ib_client_id
     def connect_to_gw(self):
-        print('connecting')
+        print('Trying to connect to Interactive Brokers...')
         self.connect(self.ib_host, self.ib_port, self.ib_client_id)
-        print('..connected to IB gateway successfully.')
+        print('  >> Connection to IB gateway successfully!!!')
 connector = Connector()
 connector.connect()
-print("Chau")
+print("Bye")

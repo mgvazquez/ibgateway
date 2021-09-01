@@ -18,4 +18,4 @@ function log(){
 }
 
 echo "Starting Interactive Brokers Controller" | info
-exec /opt/IBController/Scripts/DisplayBannerAndLaunch.sh 2>&1 | info
+exec /opt/IBC/scripts/displaybannerandlaunch.sh 2>&1 | info
