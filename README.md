@@ -18,7 +18,7 @@ and launch of the ©IBGateway; and serve a VNC server to control the IBC / IBGat
 
 Current versions:
 * Interactive Brokers Gateway: v981.3c
-* IBC: v3.9.0
+* IBC: v3.12.0
 
 You can find the latest version of this image on docker-hub: [mgvazquez/ibgateway](https://hub.docker.com/r/mgvazquez/ibgateway)
 
