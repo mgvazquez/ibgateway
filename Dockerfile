@@ -50,10 +50,10 @@ COPY components/ibgateway/* /root/Jts/
 ##### Instalacion del IBController #####
 #ENV IBCONTROLLER_PKG_URL="https://github.com/ib-controller/ib-controller/releases/download/3.4.0/IBController-3.4.0.zip" \
 #ENV IBCONTROLLER_PKG_URL="http://cdn.quantconnect.com/interactive/IBController-QuantConnect-3.2.0.5.zip" \
-ENV IBC_PKG_URL="https://github.com/IbcAlpha/IBC/releases/download/3.12.0/IBCLinux-3.12.0.zip" \
+ENV IBC_PKG_URL="https://github.com/IbcAlpha/IBC/releases/download/3.14.0/IBCLinux-3.14.0.zip" \
     IBC_INI=/root/IBC/config.ini \
     IBC_PATH=/opt/IBC \
-    TWS_MAJOR_VRSN=981 \
+    TWS_MAJOR_VRSN=1012 \
     TWS_PATH=/root/Jts \
     TWS_CONFIG_PATH=/root/Jts \
     LOG_PATH=/root/IBC/Logs \
