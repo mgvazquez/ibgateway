@@ -55,6 +55,7 @@ variables:
 .runMakePackage: &runMakePackage |
   export DOCKER_HOST="${DOCKER_PORT}"
   docker build \
+      --ulimit nofile=1024:1024 \
       --build-arg BUILD_DATE="$(date --utc '+%Y-%m-%d %H:%M:%S UTC')" \
       --build-arg BUILD_VCS_REF="${CI_COMMIT_SHA}" \
       --build-arg BUILD_VERSION="${DOCKER_IMAGE_TAG}" \

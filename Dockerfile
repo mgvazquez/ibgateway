@@ -39,6 +39,7 @@ RUN chmod a+x /etc/service/*/*
 ###### Instalacion del IBGateway #######
 # TODO: DETECTAR LA VERSION IBGateway
 ENV IBGATEWAY_PKG_URL="https://download2.interactivebrokers.com/installers/ibgateway/stable-standalone/ibgateway-stable-standalone-linux-x64.sh"
+#ENV IBGATEWAY_PKG_URL="https://download2.interactivebrokers.com/installers/ibgateway/latest-standalone/ibgateway-latest-standalone-linux-x64.sh"
 ADD ${IBGATEWAY_PKG_URL} /tmp/ibgateway.sh
 RUN chmod a+x /tmp/ibgateway.sh \
  && echo -e "\nn" | /tmp/ibgateway.sh -c \
@@ -50,7 +51,8 @@ COPY components/ibgateway/* /root/Jts/
 ##### Instalacion del IBController #####
 #ENV IBCONTROLLER_PKG_URL="https://github.com/ib-controller/ib-controller/releases/download/3.4.0/IBController-3.4.0.zip" \
 #ENV IBCONTROLLER_PKG_URL="http://cdn.quantconnect.com/interactive/IBController-QuantConnect-3.2.0.5.zip" \
-ENV IBC_PKG_URL="https://github.com/IbcAlpha/IBC/releases/download/3.12.0/IBCLinux-3.12.0.zip" \
+#ENV IBC_PKG_URL="https://github.com/IbcAlpha/IBC/releases/download/3.18.0/IBCLinux-3.18.0.zip" \
+ENV IBC_PKG_URL="https://github.com/IbcAlpha/IBC/releases/download/3.18.0-Update.1/IBCLinux-3.18.0.zip" \ 
     IBC_INI=/root/IBC/config.ini \
     IBC_PATH=/opt/IBC \
     TWS_MAJOR_VRSN=981 \

@@ -17,8 +17,8 @@ In addition, it uses the [IBC Project](https://github.com/IbcAlpha/IBC) to manag
 and launch of the ©IBGateway; and serve a VNC server to control the IBC / IBGateway interface.
 
 Current versions:
-* Interactive Brokers Gateway: v981.3c
-* IBC: v3.12.0
+* Interactive Brokers Gateway: 10.19.2h
+* IBC: v3.18.0
 
 You can find the latest version of this image on docker-hub: [mgvazquez/ibgateway](https://hub.docker.com/r/mgvazquez/ibgateway)
 
@@ -29,7 +29,7 @@ You can find the latest version of this image on docker-hub: [mgvazquez/ibgatewa
 To build this image, run the following command on the root path of the repo:
 
 ```bash
-$ docker build -t mgvazquez/ibgateway:latest .
+$ docker build --ulimit nofile=122880:122880 -m 3G -t mgvazquez/ibgateway:latest .
 ```
 
 > IMPORTANT: Must have `docker` installed on your system.
